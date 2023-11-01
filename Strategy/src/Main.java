@@ -37,18 +37,24 @@ class StudentSearch implements SearchBehavior<Student, String>
 }
 class CourseSearch implements SearchBehavior<Course, String>
 {
-    @Override // <--- think of this as documentation
+    @Override 
     public boolean search(Course obj, String v)
     {
         return obj.getNumber().equals(v);
     }
 }
 
+
 class AllItems<T> //T is data type variable // Generic
 {
     private ArrayList<T> _items; //Generic because can hold many diff things
 
     public AllItems(){_items = new ArrayList<T>();}
+    
+    public AllItems(int size) {
+    	_items = new ArrayList<T>(size);
+    }
+    
     public void addItem(T t)
     {
         _items.add(t);
@@ -94,6 +100,9 @@ class AllStudents{
     {
         _students = new AllItems<Student>();
     }
+    public AllStudents(int size) {
+    	_students = new AllItems<Student>(size);
+    }
     public void addStudent(String id){
         _students.addItem(new Student(id));
     }
@@ -104,9 +113,21 @@ class AllStudents{
         return _students.findItem(id, new StudentSearch());
     }
     public void removeStudent(String id){
-        int i = _students.findItem(id, new StudentSearch());
+        int i = findStudent(id);
         _students.removeItem(i); //not written in generic
 
+    }
+    public boolean modifyStudent(String oldId, String newId) {
+    	int i = findStudent(oldId);
+    	if(i < 0 )
+    		return false;
+    	else {
+    		_students.getItem(i).setID(newId); 
+    		return true;
+    	}
+    }
+    public int size() {
+    	return _students.size();
     }
     public String toString(){
         String s = "Students:\n";
@@ -133,6 +154,18 @@ class AllCourses{
         int i = _courses.findItem(cnum, new CourseSearch());
         _courses.removeItem(i);
     }
+    public boolean modifyStudent(String oldId, String newId) {
+    	int i = findCourse(oldId);
+    	if(i < 0 )
+    		return false;
+    	else {
+    		_courses.getItem(i).setNumber(newId); 
+    		return true;
+    	}
+    }
+    public int size() {
+    	return _courses.size();
+    }
     public String toString(){
         String s = "Courses:\n";
         for (int i=0; i<_courses.size(); i++)
@@ -140,7 +173,6 @@ class AllCourses{
         return s;
     }
 }
-
 public class Main {
     public static void main(String[] args) {
         AllStudents as = new AllStudents();
